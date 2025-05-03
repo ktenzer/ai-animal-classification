@@ -1,4 +1,5 @@
 import os
+import csv
 import argparse
 import torch
 from PIL import Image
@@ -67,7 +68,7 @@ elif args.model == "original":
     model.eval()
     processor = AutoImageProcessor.from_pretrained(ORIGINAL_MODEL_NAME)
 
-    LABELS = model.config.id2label  # e.g. {0: "LABEL_0", 1: "LABEL_1", ...}
+    LABELS = model.config.id2label
 
     def predict(image):
         inputs = processor(images=image, return_tensors="pt")
@@ -80,7 +81,12 @@ elif args.model == "original":
 else:
     raise ValueError("Error: Unknown model option selected.")
 
-# --- INFERENCE LOOP ---
+csv_filename = f"results/inference_results_{args.model}.csv"
+
+# Collect results
+results = []
+
+# Inference Loop
 print("Running inference...")
 for img_name in image_files:
     img_path = os.path.join(INFER_IMAGES_PATH, img_name)
@@ -88,5 +94,15 @@ for img_name in image_files:
 
     result = predict(image)
     print(f"{img_name}: {result}")
+    
+    results.append((img_name, result))
 
 print("Inference complete.")
+
+# Save to CSV
+with open(csv_filename, mode='w', newline='') as csv_file:
+    writer = csv.writer(csv_file)
+    writer.writerow(["Image", "Prediction"])  # header
+    writer.writerows(results)
+
+print(f"Results saved to {csv_filename}")
