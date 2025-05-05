@@ -8,7 +8,7 @@ from roboflow import Roboflow
 from collections import Counter
 from torch import nn
 
-# Config
+# --- Configuration ---
 ROBOFLOW_API_KEY = os.getenv("ROBOFLOW_API_KEY")
 ROBOFLOW_WORKSPACE = os.getenv("ROBOFLOW_WORKSPACE")
 ROBOFLOW_PROJECT = os.getenv("ROBOFLOW_PROJECT")
@@ -27,10 +27,9 @@ OUTPUT_DIR = "./finetuned-vision-model"
 #dataset = project.version(ROBOFLOW_VERSION).download("folder")
 #dataset_path = dataset.location
 
-# Local dataset
+# --- Dataset ---
 dataset_path = "./Animal-Classification-6"
 
-# Load images
 def load_data(data_dir, label_map):
     data = []
     for label_name in os.listdir(data_dir):
@@ -54,7 +53,7 @@ val_data = load_data(os.path.join(dataset_path, "test"), LABEL_MAP)
 print("Train Samples:", len(train_data))
 print("Validation Samples:", len(val_data))
 
-# Prepare dataset 
+# --- Prepare datasets ---
 def preprocess(example):
     img = Image.open(example["image_path"]).convert("RGB")
     example["image"] = img
@@ -68,23 +67,23 @@ datasets = DatasetDict({
     "validation": val_dataset
 })
 
-# Calculate weights
-labels = [x["label"] for x in datasets["train"]]
-counter = Counter(labels)
-total = sum(counter.values())
-class_weights = [total / counter[i] for i in range(len(counter))]
-class_weights = torch.tensor(class_weights, dtype=torch.float)
+# Calculate weights automatically
+# labels = [x["label"] for x in datasets["train"]]
+# counter = Counter(labels)
+# total = sum(counter.values())
+# class_weights = [total / counter[i] for i in range(len(counter))]
+# class_weights = torch.tensor(class_weights, dtype=torch.float)
 
-class_weights = torch.tensor([6.1, 2.1])
+# Calculate weights manually
+class_weights = torch.tensor([6.1, 2.1]) 
 
-print("Calculated class weights:", class_weights)
+print("Using class weights:", class_weights)
 
-# Define custom model with weighted loss
+# Custom model with weighted loss and label smoothing
 class WeightedLossModel(CLIPForImageClassification):
-    def __init__(self, config, class_weights=None):
+    def __init__(self, config, class_weights=None, label_smoothing=0.1):
         super().__init__(config)
-        self.class_weights = class_weights
-        self.loss_fn = nn.CrossEntropyLoss(weight=class_weights) if class_weights is not None else nn.CrossEntropyLoss()
+        self.loss_fn = nn.CrossEntropyLoss(weight=class_weights, label_smoothing=label_smoothing)
 
     def forward(self, pixel_values=None, labels=None, **kwargs):
         outputs = super().forward(pixel_values=pixel_values, labels=None, **kwargs)
@@ -92,15 +91,15 @@ class WeightedLossModel(CLIPForImageClassification):
         loss = self.loss_fn(logits, labels) if labels is not None else None
         return {"loss": loss, "logits": logits}
 
-# Load fresh pretrained model each time (reset)
+# Load pretrained config and initialize custom model
 config = AutoConfig.from_pretrained(MODEL_NAME, num_labels=len(LABEL_MAP))
-model = WeightedLossModel(config=config, class_weights=class_weights)
+model = WeightedLossModel(config=config, class_weights=class_weights, label_smoothing=0.1)
 
-# Load original pretrained weights (avoids cumulative drift)
+# Load pretrained weights to avoid cumulative drift
 pretrained_state_dict = CLIPForImageClassification.from_pretrained(MODEL_NAME).state_dict()
 model.load_state_dict(pretrained_state_dict, strict=False)
 
-# Image transforms
+# Image transforms 
 processor = AutoImageProcessor.from_pretrained(MODEL_NAME)
 
 augment = transforms.Compose([
@@ -126,7 +125,7 @@ def transform_val(example):
 datasets["train"] = datasets["train"].map(transform_train)
 datasets["validation"] = datasets["validation"].map(transform_val)
 
-# Training args 
+# Training arguments
 training_args = TrainingArguments(
     output_dir=OUTPUT_DIR,
     per_device_train_batch_size=BATCH_SIZE,
@@ -147,6 +146,7 @@ def compute_metrics(eval_pred):
     acc = (predictions == labels).mean()
     return {"accuracy": acc}
 
+# Trainer
 trainer = Trainer(
     model=model,
     args=training_args,
@@ -184,7 +184,7 @@ wrapped_model.eval()
 
 dummy_input = torch.randn(1, 3, 224, 224)
 traced_model = torch.jit.trace(wrapped_model, dummy_input)
-traced_model.save("./finetuned-vision-model/model_torchscript.pt")
+traced_model.save(os.path.join(OUTPUT_DIR, "model_torchscript.pt"))
 
 print("TorchScript export complete!")
 print("Done! Model saved to", OUTPUT_DIR)

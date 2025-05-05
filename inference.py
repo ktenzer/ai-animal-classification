@@ -32,6 +32,7 @@ if len(image_files) == 0:
 # Load Model
 if args.model == "tuned":
     print("Loading tuned model...")
+
     model = torch.jit.load(TUNED_MODEL_PATH)
     model.eval()
     processor = AutoImageProcessor.from_pretrained(TUNED_PROCESSOR_PATH)
