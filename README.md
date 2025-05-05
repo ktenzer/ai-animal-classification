@@ -69,12 +69,10 @@ After training fine tuned model we can test inference as compared to the origina
 ```
 $ poetry run python inference.py --model tuned
 ```
-
-
 | Image           | Prediction | Result  |
 | --------------- | ---------- | ------- |
-| car1            | non-animal | &#x2611 |
-| car2            | animal     | &#x2611 |
+| car1            | non-animal | <style>span[class="checked"]{color: green;}</style> |
+| car2            | animal     | <style>span[class="unchecked"]{color: red;}</style> |
 | elephant        | animal     | &#x2611 |
 | lion            | animal     | &#x2611 |
 | city            | non-animal | &#x2611 |
