@@ -1,7 +1,6 @@
 Image,Prediction
 car2.jpg,LABEL_0
 car1.jpg,LABEL_0
-new_york.jpg,LABEL_0
 elephant.jpg,LABEL_0
 lion.jpg,LABEL_0
 city.jpg,LABEL_0
