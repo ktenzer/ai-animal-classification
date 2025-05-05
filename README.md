@@ -28,18 +28,18 @@ Using inference we pass in several images to see how well the model can predict 
 $ poetry run python inference.py --model original_zero_shot
 ```
 
-| Image           | Prediction | Result  |
-| --------------- | ---------- | ------- |
-| car1            | non-animal | &#x2611 |
-| car2            | animal     | &#x2612 |
-| elephant        | animal     | &#x2611 |
-| lion            | animal     | &#x2611 |
-| city            | non-animal | &#x2611 |
-| gorilla         | animal     | &#x2611 |
-| panda           | non-animal | &#x2612 |
-| cat             | animal     | &#x2611 |
-| llama           | animal     | &#x2611 |
-| pet_with_family | non-animal | &#x2612 |
+| Image           | Prediction | Result |
+| --------------- | ---------- | ------ |
+| car1            | non-animal | [x]    |
+| car2            | animal     | [ ]    |
+| elephant        | animal     | [x]    |
+| lion            | animal     | [x]    |
+| city            | non-animal | [x]    |
+| gorilla         | animal     | [x]    |
+| panda           | non-animal | [ ]    |
+| cat             | animal     | [x]    |
+| llama           | animal     | [x]    |
+| pet_with_family | non-animal | [ ]    |
 
 As we can see the model is pretty good but not great as it got 7/10 correct. So how do we improve? The answer is fine tuning.
 
@@ -69,17 +69,17 @@ After training fine tuned model we can test inference as compared to the origina
 ```
 $ poetry run python inference.py --model tuned
 ```
-| Image           | Prediction | Result  |
-| --------------- | ---------- | ------- |
-| car1            | non-animal | <style>span[class="checked"]{color: green;}</style> |
-| car2            | animal     | <style>span[class="unchecked"]{color: red;}</style> |
-| elephant        | animal     | &#x2611 |
-| lion            | animal     | &#x2611 |
-| city            | non-animal | &#x2611 |
-| gorilla         | animal     | &#x2611 |
-| panda           | non-animal | &#x2611 |
-| cat             | animal     | &#x2611 |
-| llama           | animal     | &#x2611 |
-| pet_with_family | non-animal | &#x2611 |
+| Image           | Prediction | Result |
+| --------------- | ---------- | ------ |
+| car1            | non-animal | [x]    |
+| car2            | animal     | [x]    |
+| elephant        | animal     | [x]    |
+| lion            | animal     | [x]    |
+| city            | non-animal | [x]    |
+| gorilla         | animal     | [x]    |
+| panda           | non-animal | [x]    |
+| cat             | animal     | [x]    |
+| llama           | animal     | [x]    |
+| pet_with_family | non-animal | [x]    |
 
 The results speak for themselves, our tuned model is able to successfully predict every image which shows just a little bit of tuning can go a long way to increase model accuracy and predictability.
