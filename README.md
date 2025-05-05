@@ -83,3 +83,14 @@ $ poetry run python inference.py --model tuned
 | pet_with_family | non-animal | ✅     |
 
 The results speak for themselves, our tuned model is able to successfully predict every image which shows just a little bit of tuning can go a long way to increase model accuracy and predictability.
+
+## Hosting Model
+Now that we have a working model, it is time to host it. A simple UI is used which allows for uploading an image and then using inference to have the model predict if the image is animal or non-animal.
+
+```
+$ poetry run python ui.py
+```
+
+Even though the tuned model has never seen a bird (in example below) it is very capable of predicting it correctly.
+
+![UI](images/ui.png)
