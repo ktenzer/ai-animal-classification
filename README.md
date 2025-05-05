@@ -30,16 +30,16 @@ $ poetry run python inference.py --model original_zero_shot
 
 | Image           | Prediction | Result |
 | --------------- | ---------- | ------ |
-| car1            | non-animal | [x]    |
-| car2            | animal     | [ ]    |
-| elephant        | animal     | [x]    |
-| lion            | animal     | [x]    |
-| city            | non-animal | [x]    |
-| gorilla         | animal     | [x]    |
-| panda           | non-animal | [ ]    |
-| cat             | animal     | [x]    |
-| llama           | animal     | [x]    |
-| pet_with_family | non-animal | [ ]    |
+| car1            | non-animal | ✅     |
+| car2            | animal     | ❌     |
+| elephant        | animal     | ✅     |
+| lion            | animal     | ✅     |
+| city            | non-animal | ✅     |
+| gorilla         | animal     | ✅     |
+| panda           | non-animal | ❌     |
+| cat             | animal     | ✅     |
+| llama           | animal     | ✅     |
+| pet_with_family | non-animal | ❌     |
 
 As we can see the model is pretty good but not great as it got 7/10 correct. So how do we improve? The answer is fine tuning.
 
@@ -71,15 +71,15 @@ $ poetry run python inference.py --model tuned
 ```
 | Image           | Prediction | Result |
 | --------------- | ---------- | ------ |
-| car1            | non-animal | [x]    |
-| car2            | animal     | [x]    |
-| elephant        | animal     | [x]    |
-| lion            | animal     | [x]    |
-| city            | non-animal | [x]    |
-| gorilla         | animal     | [x]    |
-| panda           | non-animal | [x]    |
-| cat             | animal     | [x]    |
-| llama           | animal     | [x]    |
-| pet_with_family | non-animal | [x]    |
+| car1            | non-animal | ✅     |
+| car2            | animal     | ✅     |
+| elephant        | animal     | ✅     |
+| lion            | animal     | ✅     |
+| city            | non-animal | ✅     |
+| gorilla         | animal     | ✅     |
+| panda           | non-animal | ✅     |
+| cat             | animal     | ✅     |
+| llama           | animal     | ✅     |
+| pet_with_family | non-animal | ✅     |
 
 The results speak for themselves, our tuned model is able to successfully predict every image which shows just a little bit of tuning can go a long way to increase model accuracy and predictability.
