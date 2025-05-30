@@ -16,7 +16,7 @@ roboflow = "^1.1.63"
 peft = "0.10.0"
 accelerate = "0.27.2"
 gradio = "^5.29.0"
-
+tensorflow = "^2.19.0"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]

@@ -1,3 +1,5 @@
 __pycache__
 finetuned-vision-model
 .gradio
+output
+.DS_Store
